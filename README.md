@@ -73,7 +73,7 @@ Now everything is setup, simply start the workers using the startAllWorkers scri
 output:
 
 ```txt
-Me:~/github/federatedTutorial$ ./startAllWorkers.sh 
+Me:~/github/federatedTutorial$ ./startAllWorkers.sh
 Starting Workers.
 Starting worker XPS-15-7590 8002 def
 Starting worker XPS-15-7590 8001 def
@@ -92,3 +92,108 @@ Also worth noting is that all the output from the federated worker is concatenat
 
 ## Step 5: run algorithms
 
+This tutorial is using a simple LM script. To execute it simply use:
+
+```sh
+./run.sh
+```
+
+The terminal output should look like the following:
+
+```txt
+Me:~/github/federatedTutorial$ ./run.sh
+fed 1W def - lm mnist
+fed 2W def - lm mnist
+loc def - lm mnist
+```
+
+This have execute three different execution versions.
+first with one federated worker, then two and finally a local baseline.
+
+all outputs are put into the results folder:
+
+```txt
+Me:~/github/federatedTutorial$ cat results/fed1/lm_mnist_XPS-15-7590_def.log
+SystemDS Statistics:
+Total elapsed time:             1.489 sec.
+Total compilation time:         0.533 sec.
+Total execution time:           0.956 sec.
+Cache hits (Mem/Li/WB/FS/HDFS): 6/0/0/0/0.
+Cache writes (Li/WB/FS/HDFS):   0/2/0/1.
+Cache times (ACQr/m, RLS, EXP): 0.000/0.000/0.001/0.036 sec.
+HOP DAGs recompiled (PRED, SB): 0/0.
+HOP DAGs recompile time:        0.000 sec.
+Federated I/O (Read, Put, Get): 2/0/2.
+Federated Execute (Inst, UDF):  6/0.
+Total JIT compile time:         1.406 sec.
+Total JVM GC count:             2.
+Total JVM GC time:              0.023 sec.
+Heavy hitter instructions:
+  #  Instruction  Time(s)  Count
+  1  fed_tsmm       0.637      1
+  2  solve          0.231      1
+  3  write          0.036      1
+  4  +              0.019      1
+  5  fed_r'         0.017      1
+  6  fed_ba+*       0.010      1
+  7  <=             0.007      1
+  8  rdiag          0.003      1
+  9  rand           0.001      1
+ 10  rmvar          0.001      6
+ 11  createvar      0.000     10
+ 12  mvvar          0.000     26
+ 13  -              0.000     12
+ 14  r'             0.000      1
+ 15  ==             0.000      8
+ 16  ^              0.000      1
+ 17  >              0.000      2
+ 18  ||             0.000      2
+
+real 4,44
+user 6,77
+sys 0,28
+```
+
+Similarly one can see what the federated sites executed in the federated output logs results/fed/workerlog:
+
+```txt
+Me:~/github/federatedTutorial$ cat results/fed/workerlog/XPS-15-7590-8002.out
+Federated Worker SystemDS Statistics:
+Total elapsed time:             0.000 sec.
+Total compilation time:         0.000 sec.
+Total execution time:           0.000 sec.
+Number of compiled Spark inst:  0.
+Number of executed Spark inst:  0.
+Cache hits (Mem/Li/WB/FS/HDFS): 4/0/0/0/2.
+Cache writes (Li/WB/FS/HDFS):   0/0/0/0.
+Cache times (ACQr/m, RLS, EXP): 0.287/0.000/0.000/0.000 sec.
+HOP DAGs recompiled (PRED, SB): 0/0.
+HOP DAGs recompile time:        0.000 sec.
+Spark ctx create time (lazy):   0.000 sec.
+Spark trans counts (par,bc,col):0/0/0.
+Spark trans times (par,bc,col): 0.000/0.000/0.000 secs.
+Total JIT compile time:         1.943 sec.
+Total JVM GC count:             2.
+Total JVM GC time:              0.023 sec.
+Heavy hitter instructions:
+ #  Instruction  Time(s)  Count
+ 1  tsmm           0.387      1
+ 2  r'             0.022      1
+ 3  ba+*           0.004      1
+ 4  rmvar          0.000      3
+```
+
+The saved LM model is located in the tmp folder and the federated results is exactly the same as if it was executed locally.
+
+```txt
+Me:~/github/federatedTutorial$ ls tmp/
+fed_mnist_1.res  fed_mnist_1.res.mtd  fed_mnist_2.res  fed_mnist_2.res.mtd  mnist_local.res  mnist_local.res.mtd  worker
+```
+
+## Step 6: Stop Workers
+
+to stop the workers running simply use the stop all workers script.
+
+```sh
+./stopAllWorkers.sh
+```

@@ -6,7 +6,7 @@ source parameters.sh
 # for all remote workers stop.
 for index in ${!address[*]}; do
     if [ "${address[$index]}" != "localhost" ]; then
-        ssh ${address[$index]} " cd ${remoteDir}; ./code/stopWorker.sh" &
+        ssh ${address[$index]} " cd ${remoteDir}; ./stopWorker.sh" &
     fi
 done
 # stop all localhost workers.

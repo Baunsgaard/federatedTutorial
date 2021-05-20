@@ -6,7 +6,6 @@ import math
 data_dir = 'data/'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-a', '--addresses', type=str, nargs='+', required=True)
 parser.add_argument('-p', '--ports', type=str, nargs='+', required=True)
 parser.add_argument('-n', '--numberOfWorkers', required=True, type=int)
 parser.add_argument('-d', '--dataName', required=True, type=str)
@@ -16,7 +15,6 @@ args = parser.parse_args()
 
 data_name = args.dataName
 features = args.features
-addresses = args.addresses
 ports = args.ports
 num_workers = args.numberOfWorkers
 num_examples = args.num_examples
@@ -42,7 +40,7 @@ def writeJson(rows: int, cols: int, name: str, shortName: str):
     if num_workers == 1:
         data.append({
             "dataType": "MATRIX",
-            "address": addresses[0] + ':' + ports[0],
+            "address": 'localhost:' + ports[0],
             "filepath": data_dir + shortName[:-1] + '.data',
             "begin": [0, 0], "end": [rows, cols]})
     else:
@@ -52,7 +50,7 @@ def writeJson(rows: int, cols: int, name: str, shortName: str):
 
             data.append({
                 "dataType": "MATRIX",
-                "address": addresses[i] + ':' + ports[i],
+                "address": 'localhost:' + ports[i],
                 "filepath": data_dir +shortName + str(num_workers) + '_' + str(i+1) + '.data',
                 "begin": [
                     start,

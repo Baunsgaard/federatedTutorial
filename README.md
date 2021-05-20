@@ -56,10 +56,11 @@ and the data folder should contain the following:
 
 ```txt
 Me:~/github/federatedTutorial$ ls data
-fed_mnist_features_1.json      mnist_features_2_1.data      mnist_features.data        mnist_labels_2_2.data      mnist_test_features.data
-fed_mnist_features_1.json.mtd  mnist_features_2_1.data.mtd  mnist_features.data.mtd    mnist_labels_2_2.data.mtd  mnist_test_features.data.mtd
-fed_mnist_labels_1.json        mnist_features_2_2.data      mnist_labels_2_1.data      mnist_labels.data          mnist_test_labels.data
-fed_mnist_labels_1.json.mtd    mnist_features_2_2.data.mtd  mnist_labels_2_1.data.mtd  mnist_labels.data.mtd      mnist_test_labels.data.mtd
+fed_mnist_features_1.json      fed_mnist_labels_1.json.mtd  mnist_features_2_1.data      mnist_features.data.mtd    mnist_labels_2_2.data      mnist_test_features.data.mtd
+fed_mnist_features_1.json.mtd  fed_mnist_labels_2.json      mnist_features_2_1.data.mtd  mnist_labels_1_1.data      mnist_labels_2_2.data.mtd  mnist_test_labels.data
+fed_mnist_features_2.json      fed_mnist_labels_2.json.mtd  mnist_features_2_2.data      mnist_labels_1_1.data.mtd  mnist_labels.data          mnist_test_labels.data.mtd
+fed_mnist_features_2.json.mtd  mnist_features_1_1.data      mnist_features_2_2.data.mtd  mnist_labels_2_1.data      mnist_labels.data.mtd
+fed_mnist_labels_1.json        mnist_features_1_1.data.mtd  mnist_features.data          mnist_labels_2_1.data.mtd  mnist_test_features.data
 ```
 
 ## Step 4: Start workers
@@ -90,9 +91,21 @@ Me:~/github/federatedTutorial$ cat tmp/worker/XPS-15-7590-8001
 
 Also worth noting is that all the output from the federated worker is concatenated to: results/fed/workerlog/
 
+## Step 4.1: Port Forward if you dont have access to the ports
+
+If the ports are not accessible directly from your machine because of a firewall, i suggest using the port forwarding script.
+that port forward the list of ports from your local machine to the remote machines.
+Note this only works if all the federated machines are remote machines, aka the address list contain no localhost.
+
+```sh
+portforward.sh
+```
+
+Note these process will just continue running in the background, and have to manually terminated.
+
 ## Step 5: run algorithms
 
-This tutorial is using a simple LM script. To execute it simply use:
+This tutorial is using a LM script. To execute it simply use:
 
 ```sh
 ./run.sh
@@ -192,7 +205,7 @@ fed_mnist_1.res  fed_mnist_1.res.mtd  fed_mnist_2.res  fed_mnist_2.res.mtd  mnis
 
 ## Step 6: Stop Workers
 
-to stop the workers running simply use the stop all workers script.
+To stop the workers running simply use the stop all workers script.
 
 ```sh
 ./stopAllWorkers.sh

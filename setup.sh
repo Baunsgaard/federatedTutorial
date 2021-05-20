@@ -12,10 +12,10 @@ for index in ${!address[@]}; do
     numWorkers=$((index + 1))
     if [[ ! -f "data/fed_mnist_features_${numWorkers}.json" ]]; then
         python code/dataGen/federatedMetaDataGenerator.py \
-            -a ${address[@]} -p ${ports[@]} -n $numWorkers -d "mnist_features_" \
+            -p ${ports[@]} -n $numWorkers -d "mnist_features_" \
             -f 784 -e 60000 &
         python code/dataGen/federatedMetaDataGenerator.py \
-            -a ${address[@]} -p ${ports[@]} -n $numWorkers -d "mnist_labels_" \
+            -p ${ports[@]} -n $numWorkers -d "mnist_labels_" \
             -f 10 -e 60000 &
     fi
 done
@@ -54,9 +54,11 @@ for index in ${!address[@]}; do
             fi
         fi
     done
-    rsync -ah -e ssh --include="*_features.dat*" --exclude='*' "data/" ${address[0]}:$remoteDir/data/ &
+    rsync -ah -e ssh --include="*_features.dat*" --exclude='*' "data/" ${address[0]}:${remoteDir}data/ &
     sleep 0.1
-    rsync -ah -e ssh --include="*_features.dat***" --exclude='*' "data/" ${address[0]}:$remoteDir/data/ &
+    rsync -ah -e ssh --include="*_features.dat***" --exclude='*' "data/" ${address[0]}:${remoteDir}data/ &
     sleep 0.1
-    rsync -ah -e ssh --include="*_labels.dat*" --exclude='*' "data/" ${address[0]}:$remoteDir/data/ &
+    rsync -ah -e ssh --include="*_labels.dat*" --exclude='*' "data/" ${address[0]}:${remoteDir}data/ &
 done
+
+wait

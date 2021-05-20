@@ -1,0 +1,7 @@
+
+data/
+mnist/
+python_venv/
+tmp/
+systemds/
+scratch_space/

@@ -8,8 +8,8 @@ export SYSDS_QUIET=1
 
 VENV_PATH="python_venv"
 
-address=(localhost localhost)
-ports=(8001 8002 8003 8004 8005 8006 8007 8008)
+address=("localhost" "localhost")
+ports=("8001" "8002" "8003" "8004" "8005" "8006" "8007" "8008")
 
 remoteDir="$HOME/github/federatedTutorial/"
 

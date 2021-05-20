@@ -8,7 +8,7 @@ for index in ${!address[*]}; do
     logstart="results/fed${numWorkers}"
     mkdir -p $logstart
 
-    printf "fed ${numWorkers}W $conf - lm mnist"
+    echo "fed ${numWorkers}W $conf - lm mnist"
     fullLogname="$logstart/lm_mnist_${HOSTNAME}_$conf.log"
 
     # Remove old log
@@ -28,10 +28,10 @@ for index in ${!address[*]}; do
         "tmp/fed_mnist_${numWorkers}.res" \
         ; } >>$fullLogname 2>&1
 
-    printf "\n"
 
 done
 
+echo "loc $conf - lm mnist"
 # Local execution for reference:
 mkdir -p "results/local"
 fullLogname="results/local/lm_mnist_${HOSTNAME}_$conf.log"

@@ -33,4 +33,3 @@ systemds code/exp/CNN.dml \
     -stats \
     -args $x $y_hot $xt $yt_hot
 
-    

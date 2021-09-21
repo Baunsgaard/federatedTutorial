@@ -1,64 +1,71 @@
 #/bin/bash
 
 source parameters.sh
-source "$VENV_PATH/bin/activate"
 
-./syncSetup.sh
+export LOG4JPROP='conf/log4j-off.properties'
+# export LOG4JPROP='conf/log4j-debug.properties'
+export SYSDS_QUIET=1
 
-python code/dataGen/generate_mnist.py
+if [[ ! -d "python_venv" ]]; then
+    # Install systemds python environment if not already installed.
+    # this also install the system on the remotes defined in parameters.sh
+    ./install.sh
+fi
 
-# Generate the federated json files, specifying the remote federated workers locations.
-for index in ${!address[@]}; do
-    numWorkers=$((index + 1))
-    if [[ ! -f "data/fed_mnist_features_${numWorkers}.json" ]]; then
-        python code/dataGen/federatedMetaDataGenerator.py \
-            -p ${ports[@]} -n $numWorkers -d "mnist_features_" \
-            -f 784 -e 60000 &
-        python code/dataGen/federatedMetaDataGenerator.py \
-            -p ${ports[@]} -n $numWorkers -d "mnist_labels_" \
-            -f 10 -e 60000 &
-    fi
-done
+# Activate python environment
+source "python_venv/bin/activate"
+
+# Syncronize the basic scripts with the remotes.
+./sync.sh &
+
+# if [[ ! -f "data/mnist_features.data" ]]; then
+python code/dataGen/generate_mnist.py &
+# fi
+
+# Generate the fedreated json files.
+python code/dataGen/federatedMetaDataGenerator.py \
+    -p ${ports[@]} -a ${address[@]} -n $numWorkers -d "mnist_features_" \
+    -f 784 -e 60000 &
+python code/dataGen/federatedMetaDataGenerator.py \
+    -p ${ports[@]} -a ${address[@]} -n $numWorkers -d "mnist_labels_" \
+    -f 1 -e 60000 &
+python code/dataGen/federatedMetaDataGenerator.py \
+    -p ${ports[@]} -a ${address[@]} -n $numWorkers -d "mnist_labels_hot_" \
+    -f 10 -e 60000 &
+
+python code/dataGen/federatedMetaDataGenerator.py \
+    -p ${ports[@]} -a ${address[@]} -n $numWorkers -d "mnist_test_features_" \
+    -f 784 -e 10000 &
+python code/dataGen/federatedMetaDataGenerator.py \
+    -p ${ports[@]} -a ${address[@]} -n $numWorkers -d "mnist_test_labels_" \
+    -f 1 -e 10000 &
+python code/dataGen/federatedMetaDataGenerator.py \
+    -p ${ports[@]} -a ${address[@]} -n $numWorkers -d "mnist_test_labels_hot_" \
+    -f 10 -e 10000 &
+
+
 wait
 
-# Make Slices Mnist
-# To give slices of different parts to the workers
-
-datasets="mnist_features mnist_labels"
+# Make Slices of dataset
+datasets="mnist_features mnist_labels mnist_labels_hot mnist_test_features mnist_test_labels mnist_test_labels_hot"
 for name in $datasets; do
-    for index in ${!address[@]}; do
-        numWorkers=$((index + 1))
-        if [[ ! -f "data/${name}_${numWorkers}_1.data.mtd" ]]; then
-            echo "Generating data/${name}_${numWorkers}_1.data"
-            systemds code/dataGen/slice.dml \
-                -config conf/def.xml \
-                -args $name $numWorkers &
-        fi
-    done
-
-    wait
+    if [[ ! -f "data/${name}_${numWorkers}_1.data.mtd" ]]; then
+        echo "Generating data/${name}_${numWorkers}_1.data"
+        systemds code/dataGen/slice.dml \
+            -config conf/def.xml \
+            -args $name $numWorkers &
+    fi
 done
 
-## Distribute the slices to individual workers.
+wait
+
+# Distribute the slices to individual workers.
 for index in ${!address[@]}; do
+    ## File ID is the federated Indentification number
     fileId=$((index + 1))
-    for worker in $address; do
-        numWorkers=$((worker + 1))
-        ## Get results:
-        if (($fileId <= $numWorkers)); then
-            if [ "${address[$index]}" != "localhost" ]; then
-                sleep 0.1
-                rsync -ah -e ssh --include="*_${numWorkers}_${fileId}.dat*" --exclude='*' "data/" ${address[$index]}:$remoteDir/data/ &
-                sleep 0.1
-                rsync -ah -e ssh --include="*_${numWorkers}_${fileId}.data***" --exclude='*' "data/" ${address[$index]}:$remoteDir/data/ &
-            fi
-        fi
-    done
-    rsync -ah -e ssh --include="*_features.dat*" --exclude='*' "data/" ${address[0]}:${remoteDir}data/ &
-    sleep 0.1
-    rsync -ah -e ssh --include="*_features.dat***" --exclude='*' "data/" ${address[0]}:${remoteDir}data/ &
-    sleep 0.1
-    rsync -ah -e ssh --include="*_labels.dat*" --exclude='*' "data/" ${address[0]}:${remoteDir}data/ &
+    # ssh -q ${address[$index]} [[ -f "${remoteDir}/data/mnist_features_${numWorkers}_${fileId}.data" ]] &&
+    #     echo "Skipping transfer since ${address[$index]} already have the file" ||
+        rsync -ah -e ssh --include="**_${numWorkers}_${fileId}.da**" --exclude='*' data/ ${address[$index]}:$remoteDir/data/ &
 done
 
 wait

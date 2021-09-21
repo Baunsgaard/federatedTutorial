@@ -6,3 +6,4 @@ tmp/
 systemds/
 scratch_space/
 results/
+.vscode/

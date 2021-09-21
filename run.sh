@@ -2,56 +2,35 @@
 
 source parameters.sh
 
-# Federated execution looping through the different number of workers.
-# for index in ${!address[*]}; do
-#     numWorkers=$((index + 1))
-#     logstart="results/fed${numWorkers}"
-#     mkdir -p $logstart
-
-#     echo "fed ${numWorkers}W $conf - lm mnist"
-#     fullLogname="$logstart/lm_mnist_${HOSTNAME}_$conf.log"
-
-#     # Remove old log
-#     rm -f $fullLogname
-
-#     # Start execution (with system time)
-#     { time -p \
-#         systemds \
-#         code/exp/lm.dml \
-#         -stats 100 \
-#         -debug \
-#         -config conf/$conf.xml \
-#         -args \
-#         "data/fed_mnist_features_${numWorkers}.json" \
-#         "data/fed_mnist_labels_${numWorkers}.json" \
-#         FALSE \
-#         "tmp/fed_mnist_${numWorkers}.res" \
-#         ; } >>$fullLogname 2>&1
+# Execute a sum of the dataset
+# systemds code/exp/sum.dml -args $x
+# Get statistics output
+# systemds code/exp/sum.dml -stats -args $x
+# Get execution explaination
+# systemds code/exp/sum.dml -explain -args $x
 
 
-# done
+# Execute a Linear model algorithm
+# systemds code/exp/lm.dml \
+#     -config conf/$conf.xml \
+#     -stats 100 \
+#     -debug \
+#     -args $x $y_hot TRUE "results/fed_mnist_${numWorkers}.res"
 
+# Execute a Multi Log Regression model, do prediction and print confusion matrix
+# systemds code/exp/mLogReg.dml \
+#     -config conf/$conf.xml \
+#     -stats 30 \
+#     -args $x $y $xt $yt TRUE
 
-# Get logs from federated sites
-for index in ${!address[*]}; do
-    rsync -avhq -e ssh ${address[$index]}:$remoteDir/results/fed/workerlog results/fed/workerlog &
-done
+# Execute locally to compare
+# systemds code/exp/mLogReg.dml \
+#     -config conf/$conf.xml \
+#     -stats 100 \
+#     -args $x_loc $y_loc $xt_loc $yt_loc TRUE
 
-# echo "loc $conf - lm mnist"
-# # Local execution for reference:
-# mkdir -p "results/local"
-# fullLogname="results/local/lm_mnist_${HOSTNAME}_$conf.log"
-# {
-#     time -p \
-#         systemds \
-#         code/exp/lm.dml \
-#         -stats 100 \
-#         -debug \
-#         -config conf/$conf.xml \
-#         -args \
-#         "data/mnist_features.data" \
-#         "data/mnist_labels.data" \
-#         FALSE \
-#         "tmp/mnist_local.res" \
-#         ;
-# } >>$fullLogname 2>&1
+systemds code/exp/CNN.dml \
+    -stats \
+    -args $x $y_hot $xt $yt_hot
+
+    

@@ -1,15 +1,19 @@
-#/bin/bash
+#!/bin/bash
 
 source parameters.sh
 
+## This script is to be run locally.
+
 ## Close workers
-# for all remote workers stop.
 for index in ${!address[*]}; do
     if [ "${address[$index]}" != "localhost" ]; then
-        ssh ${address[$index]} " cd ${remoteDir}; ./stopWorker.sh" &
+        # remote workers stop.
+        ssh ${address[$index]} " cd ${remoteDir}; ./scripts/stopWorker.sh" &
+    else
+        # stop all localhost workers.
+        ./scripts/stopWorker.sh
     fi
 done
-# stop all localhost workers.
-./stopWorker.sh
+
 
 wait

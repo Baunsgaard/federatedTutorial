@@ -1,8 +1,8 @@
 #/bin/bash
 
-source parameters.sh
+## This script is to be run on the federated site
 
-export LOG4JPROP='conf/log4j-worker.properties'
+source parameters.sh
 
 mkdir -p tmp/worker
 mkdir -p results/fed/workerlog/

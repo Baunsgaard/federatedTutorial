@@ -28,9 +28,16 @@ with SystemDSContext() as sds:
     # Train Data
     X = sds.from_numpy(d.get_train_data().reshape((60000, 28*28)))
     X.write("data/mnist_features.data").compute()
+    Y = sds.from_numpy(d.get_train_labels().reshape((60000, 1)))
+    Y.write("data/mnist_labels.data").compute()
     Y = sds.from_numpy(d.get_train_labels().reshape((60000, 1))) + 1
-    Y.to_one_hot(10).write("data/mnist_labels.data").compute()
+    Y.to_one_hot(10).write("data/mnist_labels_hot.data").compute()
+
+    # Test Data
     X_t = sds.from_numpy(d.get_test_data().reshape((10000, 28*28)))
     X_t.write("data/mnist_test_features.data").compute()
+    Y_t = sds.from_numpy(d.get_test_labels().reshape((10000, 1))) 
+    Y_t.write("data/mnist_test_labels.data").compute()
     Y_t = sds.from_numpy(d.get_test_labels().reshape((10000, 1))) + 1
-    Y_t.to_one_hot(10).write("data/mnist_test_labels.data").compute()
+    Y_t.to_one_hot(10).write("data/mnist_test_labels_hot.data").compute()
+

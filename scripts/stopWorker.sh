@@ -1,6 +1,6 @@
 #/bin/bash
 
-source parameters.sh
+## This script is to be run on the federated site
 
 if [[ -d "tmp/worker" ]]; then
     echo "Stopping workers $HOSTNAME"

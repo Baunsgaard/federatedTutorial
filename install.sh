@@ -27,6 +27,8 @@ for index in ${!address[*]}; do
         git pull > /dev/null 2>&1; 
         mvn clean package > /dev/null 2>&1;
         echo 'Installed Systemds on' \$HOSTNAME;
+        cd \$HOME
+        mkdir -p ${remoteDir}
         " &
 
     fi

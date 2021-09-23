@@ -9,8 +9,8 @@ export LOG4JPROP='conf/log4j-off.properties'
 # export LOG4JPROP='conf/log4j-info.properties'
 export SYSDS_QUIET=1
 
-address=("tango" "delta")
-ports=("8001" "8002")
+address=("tango" "delta" "india" "echo")
+ports=("8001" "8002" "8003" "8004")
 numWorkers=${#address[@]}
 
 remoteDir="github/federatedTutorial-v2/"

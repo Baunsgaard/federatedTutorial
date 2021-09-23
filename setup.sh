@@ -15,12 +15,13 @@ fi
 # Activate python environment
 source "python_venv/bin/activate"
 
+# Make the data directiory if it does not exist
+mkdir -p data
+
 # Syncronize the basic scripts with the remotes.
 ./sync.sh &
 
-# if [[ ! -f "data/mnist_features.data" ]]; then
 python code/dataGen/generate_mnist.py &
-# fi
 
 # Generate the fedreated json files.
 python code/dataGen/federatedMetaDataGenerator.py \

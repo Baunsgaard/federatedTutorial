@@ -1,5 +1,5 @@
 #!/bin/bash
-export SYSTEMDS_STANDALONE_OPTS="-Xmx30g -Xms30g -Xmn3000m"
+export SYSTEMDS_STANDALONE_OPTS="-Xmx4g -Xms4g -Xmn400m"
 export SYSTEMDS_ROOT="$HOME/github/systemds"
 export PATH="$SYSTEMDS_ROOT/bin:$PATH"
 
@@ -9,7 +9,10 @@ export LOG4JPROP='conf/log4j-off.properties'
 # export LOG4JPROP='conf/log4j-info.properties'
 export SYSDS_QUIET=1
 
-address=("tango" "delta" "india" "echo")
+# address=("tango" "delta" "india" "echo")
+# address=("tango" "delta")
+address=("localhost" "localhost" "localhost" "localhost")
+
 ports=("8001" "8002" "8003" "8004")
 numWorkers=${#address[@]}
 

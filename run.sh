@@ -15,13 +15,15 @@ source parameters.sh
 #     -config conf/$conf.xml \
 #     -stats 100 \
 #     -debug \
-#     -args $x $y_hot TRUE "results/fed_mnist_${numWorkers}.res"
+#     -args $x $y_hot TRUE "results/fed_mnist_${numWorkers}.res" \
+#     -fedMonitoringAddress "http://localhost:8080" 
 
 # Execute a Multi Log Regression model, do prediction and print confusion matrix
 # systemds code/exp/mLogReg.dml \
 #     -config conf/$conf.xml \
 #     -stats 30 \
-#     -args $x $y $xt $yt TRUE
+#     -args $x $y $xt $yt TRUE \
+#     -fedMonitoringAddress "http://localhost:8080" 
 
 # Execute locally to compare
 # systemds code/exp/mLogReg.dml \
@@ -29,7 +31,14 @@ source parameters.sh
 #     -stats 100 \
 #     -args $x_loc $y_loc $xt_loc $yt_loc TRUE
 
-systemds code/exp/CNN.dml \
-    -stats \
-    -args $x $y_hot $xt $yt_hot
+# systemds code/exp/CNN.dml \
+#     -stats \
+#     -args $x $y_hot $xt $yt_hot \
+#     -fedMonitoringAddress "http://localhost:8080"
 
+
+systemds code/exp/sumRepeat.dml \
+    -config conf/$conf.xml \
+    -stats 30 \
+    -args $x 100 \
+    -fedMonitoringAddress "http://localhost:8080" 

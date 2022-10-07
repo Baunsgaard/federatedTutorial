@@ -12,6 +12,9 @@ for index in ${!address[*]}; do
         ssh ${address[$index]} " cd ${remoteDir}; ./scripts/startWorker.sh ${ports[$index]} $conf" &
     fi
 done
-wait
-sleep 4
 
+##  Start the monitoring front and back end.
+
+./scripts/startMonitoring.sh &
+
+wait

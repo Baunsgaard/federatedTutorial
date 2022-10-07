@@ -40,5 +40,5 @@ source parameters.sh
 systemds code/exp/sumRepeat.dml \
     -config conf/$conf.xml \
     -stats 30 \
-    -args $x 100 \
+    -args $x 10000 \
     -fedMonitoringAddress "http://localhost:8080" 

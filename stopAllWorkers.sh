@@ -15,5 +15,6 @@ for index in ${!address[*]}; do
     fi
 done
 
+./scripts/stopMonitoring.sh 
 
 wait

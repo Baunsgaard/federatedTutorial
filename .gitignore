@@ -7,3 +7,4 @@ systemds/
 scratch_space/
 results/
 .vscode/
+derby.log

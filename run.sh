@@ -31,14 +31,14 @@ source parameters.sh
 #     -stats 100 \
 #     -args $x_loc $y_loc $xt_loc $yt_loc TRUE
 
-# systemds code/exp/CNN.dml \
-#     -stats \
-#     -args $x $y_hot $xt $yt_hot \
-#     -fedMonitoringAddress "http://localhost:8080"
+systemds code/exp/CNN.dml \
+    -stats \
+    -args $x $y_hot $xt $yt_hot \
+    -fedMonitoringAddress "http://localhost:8080"
 
 
-systemds code/exp/sumRepeat.dml \
-    -config conf/$conf.xml \
-    -stats 30 \
-    -args $x 10000 \
-    -fedMonitoringAddress "http://localhost:8080" 
+# systemds code/exp/sumRepeat.dml \
+#     -config conf/$conf.xml \
+#     -stats 30 \
+#     -args $x 100 \
+#     -fedMonitoringAddress "http://localhost:8080" 
